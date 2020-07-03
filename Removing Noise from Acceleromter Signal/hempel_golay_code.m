@@ -1,12 +1,11 @@
-    %%  Savitzky-Golay FIR smoothing filter to the data in vector x.
+    %%  Hempel and Savitzky-Golay FIR smoothing filter to the data in vector x.
     % This is normally used for removing noise from accelerometer signal,
 
 
     clear all
     close all
 
-    %load file
-    load -mat data.mat
+    %load file    
     load -mat complexSensorsData64.mat
     
     [r,w] = size(rawMatrix);
@@ -15,48 +14,12 @@
     data(1,:) = rawMatrix(:,i);
     sig = data(1,:);
     i
-    %%% Block| Savitzky-Golay FIR smoothing filter %%%%
-
-    %order of the FIR filter (polynomial) being for filtering process and framelength used for
-    %where framelength must be greater than order of the polynomial
     order = 1;
     framelen = 1;
-
-    %different test values of order and framelength to check for the best noise
-    %removal parameters.
-
-    % for order=2:1:4
-    %   for  framelen=5:2:41
-    %
-    %      lx = length(sig);
-    %      sgf = sgolayfilt(sig,order,framelen);
-    %
-    %
-    %      plot(sig,':')
-    %      hold on
-    %      plot(sgf,'.-')
-    %      legend('signal','sgolay')
-    %      hold off
-    %     sigsnr1(order,framelen) = snr(sgf);
-    %
-    %   end
-    % end
-
-    %for order=2:1:4
-    %  for  framelen=5:2:41
-
+        
     fs = 0.2857;
     t = (0:numel(sig) - 1)/fs;
-    % hampel 4,7,11,14 with 100,7
-    % hampel 2,6,15,35,63 with 10,7
-    % sgolay + hampel 10,7 and 4,41
-    
-    %medfiltLoopVoltage = sgolayfilt(sig,3,47);
-    %medfiltLoopVoltage = hampel(medfiltLoopVoltage,10,7);
-    
-    
-    %medfiltLoopVoltage = medfilt1(sig,10);
-
+             
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %moving cleaning window
     windowSize = 20;
@@ -79,7 +42,11 @@
     end
     end
     
-    final = sgolayfilt(y1,3,47);
+    
+    %hempel and golay implementation with optimised filter parameters
+    hempelfiltout = hampel(y1,10,7);    
+    final = sgolayfilt(hempelfiltout,3,47);
+    
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
     plot(sig,'b')
     hold on

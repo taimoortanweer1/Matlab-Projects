@@ -5,8 +5,7 @@
     clear all
     close all
 
-    %load file
-    load -mat data.mat
+    %load file : Place this file in the same folder as code        
     load -mat complexSensorsData64.mat
     
     [r,w] = size(rawMatrix);
@@ -22,40 +21,9 @@
     order = 1;
     framelen = 1;
 
-    %different test values of order and framelength to check for the best noise
-    %removal parameters.
-
-    % for order=2:1:4
-    %   for  framelen=5:2:41
-    %
-    %      lx = length(sig);
-    %      sgf = sgolayfilt(sig,order,framelen);
-    %
-    %
-    %      plot(sig,':')
-    %      hold on
-    %      plot(sgf,'.-')
-    %      legend('signal','sgolay')
-    %      hold off
-    %     sigsnr1(order,framelen) = snr(sgf);
-    %
-    %   end
-    % end
-
-    %for order=2:1:4
-    %  for  framelen=5:2:41
-
     fs = 0.2857;
     t = (0:numel(sig) - 1)/fs;
-    % hampel 4,7,11,14 with 100,7
-    % hampel 2,6,15,35,63 with 10,7
-    % sgolay + hampel 10,7 and 4,41
-    
-    %medfiltLoopVoltage = sgolayfilt(sig,3,47);
-    %medfiltLoopVoltage = hampel(medfiltLoopVoltage,10,7);
-    
-    
-    %medfiltLoopVoltage = medfilt1(sig,10);
+    tage = medfilt1(sig,10);
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %moving cleaning window
@@ -78,13 +46,15 @@
         x=x+1;
     end
     end
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
+    %golay filter 
     final = sgolayfilt(y1,3,47);
+    
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
     plot(sig,'b')
     hold on
     plot(final,'r')
-    %plot(medfiltLoopVoltage,'r')
     legend('Signal','Output')
     hold off
     
@@ -96,8 +66,5 @@
     
   % code to show image number i
     saveas(gcf,['sensor' num2str(i) '.png']);
-    %sigsnr1(order,framelen) = snr(sgf);
 
-    %  end
-    %end
     end
